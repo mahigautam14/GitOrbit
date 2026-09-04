@@ -78,4 +78,3 @@ def get_contributions_year(year: int) -> dict | None:
     if doc and doc.get("synced_at"):
         doc["synced_at"] = doc["synced_at"].isoformat()
     return doc
-

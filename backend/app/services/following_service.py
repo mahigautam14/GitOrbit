@@ -53,4 +53,3 @@ def get_following(page: int = 1, per_page: int = 30, search: str = "") -> dict:
         if isinstance(d.get("captured_at"), datetime):
             d["captured_at"] = d["captured_at"].isoformat()
     return {"total": total, "page": page, "per_page": per_page, "data": docs}
-

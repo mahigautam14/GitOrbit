@@ -429,4 +429,3 @@ def get_overview() -> dict:
 
     return {**stats, "top_languages": top_languages, "most_starred": most_starred,
             "most_viewed": most_viewed, "synced_at": synced_at}
-

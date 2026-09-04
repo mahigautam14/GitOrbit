@@ -58,4 +58,3 @@ def follower_history(login: str):
 @router.get("/following")
 def list_following(page: int = Query(1, ge=1), per_page: int = Query(30, ge=1, le=100), search: str = Query("")):
     return following_service.get_following(page=page, per_page=per_page, search=search)
-

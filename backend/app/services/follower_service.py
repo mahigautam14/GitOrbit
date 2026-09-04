@@ -343,4 +343,3 @@ def get_stats() -> dict:
         "total_followed_events": db["follower_events"].count_documents({"event_type": "followed"}),
         "total_unfollowed_events": unfollowed_count,
     }
-

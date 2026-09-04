@@ -282,4 +282,3 @@ def fetch_repo_commit_activity(full_name: str, retries: int = 3) -> list | None:
         return resp.json() or []
 
     return None
-

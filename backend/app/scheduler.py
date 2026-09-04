@@ -13,4 +13,3 @@ def start_scheduler():
 def stop_scheduler():
     if _scheduler.running:
         _scheduler.shutdown()
-

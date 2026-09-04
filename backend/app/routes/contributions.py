@@ -31,4 +31,3 @@ def get_contributions_summary():
         return contributions_service.get_contributions_summary()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
