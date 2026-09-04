@@ -13,25 +13,12 @@ import type {
   TrafficDay,
 } from "./types";
 
-/**
- * Frontend env only:
- * - Local: frontend/.env.local
- * - Vercel: Project Settings > Environment Variables
- *
- * Example:
- *   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
- *   NEXT_PUBLIC_API_BASE_URL=https://gitorbit.onrender.com
- */
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(
   /\/$/,
   "",
 );
 
-/**
- * If your backend routes are mounted under /api, keep this.
- * If backend routes are directly at root, change to:
- *   const API = API_BASE;
- */
+// If backend routes are under /api
 const API = `${API_BASE}/api`;
 
 function buildUrl(path: string) {
@@ -50,8 +37,8 @@ export class ApiError extends Error {
   }
 }
 
-export const apiFetch = (path: string, options: RequestInit = {}) =>
-  fetch(buildUrl(path), {
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await fetch(buildUrl(path), {
     ...options,
     cache: "no-store",
     headers: {
@@ -60,17 +47,11 @@ export const apiFetch = (path: string, options: RequestInit = {}) =>
     },
   });
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await apiFetch(path, options);
-
   if (!res.ok) {
     let data: unknown = undefined;
     try {
       data = await res.json();
-    } catch {
-      // ignore non-json error bodies
-    }
-
+    } catch {}
     throw new ApiError(
       res.status === 404 ? "Not found" : `Request failed (${res.status})`,
       res.status,
@@ -96,7 +77,6 @@ export interface ListArgs {
   search?: string;
 }
 
-/** Fields the backend will sort repositories on. Anything else falls back to stars. */
 export type RepoSort =
   | "name"
   | "stars"
