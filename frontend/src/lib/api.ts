@@ -13,6 +13,7 @@ import type {
   TrafficDay,
 } from "./types";
 
+<<<<<<< HEAD
 /**
  * Frontend env only:
  * - Local: frontend/.env.local
@@ -22,16 +23,22 @@ import type {
  *   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
  *   NEXT_PUBLIC_API_BASE_URL=https://gitorbit.onrender.com
  */
+=======
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(
   /\/$/,
   "",
 );
 
+<<<<<<< HEAD
 /**
  * If your backend routes are mounted under /api, keep this.
  * If backend routes are directly at root, change to:
  *   const API = API_BASE;
  */
+=======
+// If backend routes are under /api
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
 const API = `${API_BASE}/api`;
 
 function buildUrl(path: string) {
@@ -50,8 +57,13 @@ export class ApiError extends Error {
   }
 }
 
+<<<<<<< HEAD
 export const apiFetch = (path: string, options: RequestInit = {}) =>
   fetch(buildUrl(path), {
+=======
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await fetch(buildUrl(path), {
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
     ...options,
     cache: "no-store",
     headers: {
@@ -60,17 +72,24 @@ export const apiFetch = (path: string, options: RequestInit = {}) =>
     },
   });
 
+<<<<<<< HEAD
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await apiFetch(path, options);
 
+=======
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
   if (!res.ok) {
     let data: unknown = undefined;
     try {
       data = await res.json();
+<<<<<<< HEAD
     } catch {
       // ignore non-json error bodies
     }
 
+=======
+    } catch {}
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
     throw new ApiError(
       res.status === 404 ? "Not found" : `Request failed (${res.status})`,
       res.status,
@@ -96,7 +115,6 @@ export interface ListArgs {
   search?: string;
 }
 
-/** Fields the backend will sort repositories on. Anything else falls back to stars. */
 export type RepoSort =
   | "name"
   | "stars"
@@ -168,4 +186,8 @@ export const api = {
     request<ContributionYear>(`/contributions/${year}`, { signal }),
 
   sync: async (): Promise<SyncResult> => request<SyncResult>("/sync", { method: "POST" }),
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> a660d13c048c51e2f37211e49a7527d9901aef45
