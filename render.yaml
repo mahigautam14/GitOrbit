@@ -29,7 +29,7 @@ services:
       # Lock the API to the frontend's origin. Replace with your Vercel domain;
       # keep localhost so you can point a local frontend at the deployed API.
       - key: CORS_ORIGINS
-        value: https://GitOrbit.vercel.app,http://localhost:3000
+        value: https://git-orbit.vercel.app,http://localhost:3000
 
 # NOTE: Render's free plan spins the service down after ~15 minutes idle, and a
 # cold start takes ~50s. The in-process APScheduler sync only runs while the
