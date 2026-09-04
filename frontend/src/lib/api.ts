@@ -14,41 +14,70 @@ import type {
 } from "./types";
 
 /**
- * Where the backend lives. Set via NEXT_PUBLIC_API_BASE:
+ * Frontend env only:
+ * - Local: frontend/.env.local
+ * - Vercel: Project Settings > Environment Variables
  *
- *   local        frontend/.env.local   -> http://localhost:8000
- *   Vercel       project env var       -> https://<your-service>.onrender.com
- *   docker       compose build arg     -> http://localhost:8000
- *
- * NEXT_PUBLIC_* is inlined at BUILD time, not read at runtime — so this must be
- * set before `next build`, and changing it on Vercel requires a redeploy.
- *
- * Falls back to localhost rather than a hardcoded production URL: a deploy that
- * forgot the env var should fail obviously in development terms, not silently
- * point at someone else's backend.
+ * Example:
+ *   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ *   NEXT_PUBLIC_API_BASE_URL=https://gitorbit.onrender.com
  */
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(
+  /\/$/,
+  "",
+);
 
-export const API = `${API_BASE.replace(/\/$/, "")}/api`;
+/**
+ * If your backend routes are mounted under /api, keep this.
+ * If backend routes are directly at root, change to:
+ *   const API = API_BASE;
+ */
+const API = `${API_BASE}/api`;
+
+function buildUrl(path: string) {
+  return `${API}${path.startsWith("/") ? path : `/${path}`}`;
+}
 
 export class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-  ) {
+  status: number;
+  data?: unknown;
+
+  constructor(message: string, status: number, data?: unknown) {
     super(message);
     this.name = "ApiError";
+    this.status = status;
+    this.data = data;
   }
 }
 
-async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${API}${path}`, { signal });
+export const apiFetch = (path: string, options: RequestInit = {}) =>
+  fetch(buildUrl(path), {
+    ...options,
+    cache: "no-store",
+    headers: {
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.headers || {}),
+    },
+  });
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await apiFetch(path, options);
+
   if (!res.ok) {
+    let data: unknown = undefined;
+    try {
+      data = await res.json();
+    } catch {
+      // ignore non-json error bodies
+    }
+
     throw new ApiError(
       res.status === 404 ? "Not found" : `Request failed (${res.status})`,
       res.status,
+      data,
     );
   }
+
   return res.json() as Promise<T>;
 }
 
@@ -76,6 +105,7 @@ export type RepoSort =
   | "commits_total"
   | "branches"
   | "views_all_time";
+
 export type SortOrder = "asc" | "desc";
 export type Visibility = "all" | "public" | "private";
 
@@ -86,26 +116,26 @@ export interface RepoListArgs extends ListArgs {
 }
 
 export const api = {
-  profile: (signal?: AbortSignal) => get<Profile>("/profile", signal),
+  profile: (signal?: AbortSignal) => request<Profile>("/profile", { signal }),
 
   followers: ({ page = 1, per_page = 24, search }: ListArgs, signal?: AbortSignal) =>
-    get<Paginated<GitHubUser>>(`/followers${query({ page, per_page, search })}`, signal),
+    request<Paginated<GitHubUser>>(`/followers${query({ page, per_page, search })}`, { signal }),
 
   following: ({ page = 1, per_page = 24, search }: ListArgs, signal?: AbortSignal) =>
-    get<Paginated<GitHubUser>>(`/following${query({ page, per_page, search })}`, signal),
+    request<Paginated<GitHubUser>>(`/following${query({ page, per_page, search })}`, { signal }),
 
   unfollowed: ({ page = 1, per_page = 24, search }: ListArgs, signal?: AbortSignal) =>
-    get<Paginated<FollowerEvent>>(
+    request<Paginated<FollowerEvent>>(
       `/followers/unfollowed${query({ page, per_page, search })}`,
-      signal,
+      { signal },
     ),
 
-  followerStats: (signal?: AbortSignal) => get<FollowerStats>("/followers/stats", signal),
+  followerStats: (signal?: AbortSignal) => request<FollowerStats>("/followers/stats", { signal }),
 
   followerHistory: (login: string, signal?: AbortSignal) =>
-    get<FollowerEvent[]>(`/followers/${encodeURIComponent(login)}/history`, signal),
+    request<FollowerEvent[]>(`/followers/${encodeURIComponent(login)}/history`, { signal }),
 
-  reposOverview: (signal?: AbortSignal) => get<ReposOverview>("/repos/overview", signal),
+  reposOverview: (signal?: AbortSignal) => request<ReposOverview>("/repos/overview", { signal }),
 
   repos: (
     {
@@ -118,28 +148,24 @@ export const api = {
     }: RepoListArgs,
     signal?: AbortSignal,
   ) =>
-    get<Paginated<Repo>>(
+    request<Paginated<Repo>>(
       `/repos${query({ page, per_page, search, sort, order, visibility })}`,
-      signal,
+      { signal },
     ),
 
   repoTraffic: (name: string, signal?: AbortSignal) =>
-    get<TrafficDay[]>(`/repos/${encodeURIComponent(name)}/traffic`, signal),
+    request<TrafficDay[]>(`/repos/${encodeURIComponent(name)}/traffic`, { signal }),
 
   repo: (name: string, signal?: AbortSignal) =>
-    get<Repo>(`/repos/${encodeURIComponent(name)}`, signal),
+    request<Repo>(`/repos/${encodeURIComponent(name)}`, { signal }),
 
   starHistory: (name: string, signal?: AbortSignal) =>
-    get<StarPoint[]>(`/repos/${encodeURIComponent(name)}/star-history`, signal),
+    request<StarPoint[]>(`/repos/${encodeURIComponent(name)}/star-history`, { signal }),
 
-  contributions: (signal?: AbortSignal) => get<ContributionsSummary>("/contributions", signal),
+  contributions: (signal?: AbortSignal) => request<ContributionsSummary>("/contributions", { signal }),
 
   contributionYear: (year: number, signal?: AbortSignal) =>
-    get<ContributionYear>(`/contributions/${year}`, signal),
+    request<ContributionYear>(`/contributions/${year}`, { signal }),
 
-  sync: async (): Promise<SyncResult> => {
-    const res = await fetch(`${API}/sync`, { method: "POST" });
-    if (!res.ok) throw new ApiError(`Sync failed (${res.status})`, res.status);
-    return res.json() as Promise<SyncResult>;
-  },
+  sync: async (): Promise<SyncResult> => request<SyncResult>("/sync", { method: "POST" }),
 };
