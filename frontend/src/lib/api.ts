@@ -27,19 +27,17 @@ import type {
  * forgot the env var should fail obviously in development terms, not silently
  * point at someone else's backend.
  */
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+const API_BASE =
+  (process.env.NEXT_PUBLIC_API_BASE_URL || "https://gitorbit.onrender.com").replace(/\/$/, "");
 
-export const API = `${API_BASE.replace(/\/$/, "")}/api`;
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
+export const apiFetch = (path: string, options?: RequestInit) =>
+  fetch(`${API_BASE}${path.startsWith("/") ? path : `/${path}`}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options?.headers || {}),
+    },
+  });
 
 async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
   const res = await fetch(`${API}${path}`, { signal });
