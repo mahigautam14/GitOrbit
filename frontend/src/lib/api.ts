@@ -13,25 +13,12 @@ import type {
   TrafficDay,
 } from "./types";
 
-/**
- * Frontend env only:
- * - Local: frontend/.env.local
- * - Vercel: Project Settings > Environment Variables
- *
- * Example:
- *   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
- *   NEXT_PUBLIC_API_BASE_URL=https://gitorbit.onrender.com
- */
 const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(
   /\/$/,
   "",
 );
 
-/**
- * If your backend routes are mounted under /api, keep this.
- * If backend routes are directly at root, change to:
- *   const API = API_BASE;
- */
+// Your backend routes are under /api
 const API = `${API_BASE}/api`;
 
 function buildUrl(path: string) {
