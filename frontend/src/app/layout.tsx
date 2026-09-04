@@ -7,12 +7,12 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  // Variable axis — one file, every weight, no FOUT between 400 and 600.
+
   axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://GitOrbit.vercel.app"),
+  metadataBase: new URL("https://git-orbit.vercel.app"),
   title: {
     default: "GitOrbit — GitHub forgets. GitOrbit doesn't.",
     template: "%s · GitOrbit",

@@ -18,7 +18,6 @@ const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000
   "",
 );
 
-// Your backend routes are under /api
 const API = `${API_BASE}/api`;
 
 function buildUrl(path: string) {
@@ -83,7 +82,6 @@ export interface ListArgs {
   search?: string;
 }
 
-/** Fields the backend will sort repositories on. Anything else falls back to stars. */
 export type RepoSort =
   | "name"
   | "stars"
