@@ -1,10 +1,13 @@
-# GitOrbit — GitHub Audience Tracker
+# GitOrbit — GitHub Audience Tracker  
+
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/KalyanM45/GitOrbit?style=flat&logo=github&color=yellow)](https://github.com/KalyanM45/GitOrbit/stargazers) [![Issues](https://img.shields.io/github/issues/KalyanM45/GitOrbit?style=flat&logo=github)](https://github.com/KalyanM45/GitOrbit/issues) [![Live Demo](https://img.shields.io/badge/Live-Demo-4f8ef7?style=flat&logo=vercel&logoColor=white)](https://GitOrbit.vercel.app) [![Deployment](https://img.shields.io/badge/Deployment-success-brightgreen?style=flat&logo=render&logoColor=white)](https://GitOrbit-api-tznz.onrender.com/health) [![Version](https://img.shields.io/badge/Version-0.1.0-a371f7?style=flat)](https://github.com/KalyanM45/GitOrbit/releases)
+[![Stars](https://img.shields.io/github/stars/mahigautam14/GitOrbit?style=flat&logo=github&color=yellow)](https://github.com/mahgautam14/GitOrbit/stargazers) [![Issues](https://img.shields.io/github/issues/mahgautam14/GitOrbit?style=flat&logo=github)](https://github.com/mahgautam14/GitOrbit/issues) [![Live Demo](https://img.shields.io/badge/Live-Demo-4f8ef7?style=flat&logo=vercel&logoColor=white)](https://git-orbit.vercel.app/) [![Deployment](https://img.shields.io/badge/Deployment-success-brightgreen?style=flat&logo=render&logoColor=white)](https://GitOrbit-api-tznz.onrender.com/health) [![Version](https://img.shields.io/badge/Version-0.1.0-a371f7?style=flat)](https://github.com/mahgautam14/GitOrbit/releases)
 
 </div>
+
+## Live Demo -> https://git-orbit.vercel.app/
 
 ## About The Project
 
@@ -32,7 +35,7 @@ This will help you understand how to set up GitOrbit to track your own GitHub fo
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/KalyanM45/GitOrbit.git
+   git clone https://github.com/mahgautam14/GitOrbit.git
    cd GitOrbit
    ```
 
