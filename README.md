@@ -199,9 +199,6 @@ Contributions are what make the open-source community such an amazing place to l
 
 #### Don't forget to give the project a star! Thanks again!
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
